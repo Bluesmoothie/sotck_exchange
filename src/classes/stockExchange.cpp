@@ -47,13 +47,15 @@ void	stockExchange::addIndexPopup(void) {
 	
 	if (ImGui::BeginPopupModal("Add index", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::Text("Index:");
+		if (ImGui::IsWindowAppearing())
+			ImGui::SetKeyboardFocusHere(0);
 		ImGui::SameLine();
 		ImGui::InputText("##indexInput", &buff);
 
 		ImGui::Spacing();
 
 		ImGui::SetCursorPosX(20.0f);
-		if (ImGui::Button("Add", ImVec2(100.0f, 0))) {
+		if (ImGui::Button("Add", ImVec2(100.0f, 0)) || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
 			message = this->addIndex(buff);
 			if (message == "OK") {
 				message.clear();
