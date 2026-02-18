@@ -3,11 +3,15 @@
 stockExchange::stockExchange(void) : _addIndex(false), _showIndices(false), _removeIndex(false) {}
 
 void	stockExchange::draw(void) {
+		this->_addIndex = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_A);
+		this->_showIndices = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_S);
+		this->_removeIndex = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_R);
+
 		ImGui::BeginMainMenuBar(); {
 			if (ImGui::BeginMenu("Indices")) {
-				this->_addIndex = ImGui::MenuItem("Add index", "Ctrl+A");
-				this->_showIndices = ImGui::MenuItem("Show indices", "Ctrl+S");
-				this->_removeIndex = ImGui::MenuItem("Remove index", "Ctrl+R");
+				this->_addIndex = ImGui::MenuItem("Add index", "Ctrl+A") || ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_A);
+				this->_showIndices = ImGui::MenuItem("Show indices", "Ctrl+S") || ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_S);
+				this->_removeIndex = ImGui::MenuItem("Remove index", "Ctrl+R") || ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_R);
 				ImGui::EndMenu();
 			}
 
