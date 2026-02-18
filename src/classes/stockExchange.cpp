@@ -24,7 +24,8 @@ void	stockExchange::draw(void) {
 					std::vector<std::string>::iterator	it = this->_indices.begin();
 					std::vector<std::string>::iterator	ite = this->_indices.end();
 					for (; it != ite; ++it) {
-						ImGui::MenuItem((*it).c_str());
+						if (ImGui::MenuItem((*it).c_str(), nullptr, it == this->_selectedIndex))
+							this->_selectedIndex = it;
 					}
 				}
 				ImGui::EndMenu();

@@ -8,7 +8,8 @@
 class stockExchange {
 	private:
 
-		std::vector<std::string>	_indices;
+		std::vector<std::string>			_indices;
+		std::vector<std::string>::iterator	_selectedIndex;
 
 		bool	_addIndex;
 		bool	_showIndices;
