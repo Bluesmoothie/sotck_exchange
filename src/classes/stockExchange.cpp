@@ -82,7 +82,7 @@ void	stockExchange::addIndexPopup(void) {
 			ImGui::PopStyleColor(1);
 
 		} else
-			ImGui::Text("");
+			ImGui::Text(" ");
 
 		ImGui::EndPopup();
 	}
@@ -163,7 +163,7 @@ void	stockExchange::removeIndexPopup(void) {
 			ImGui::PopStyleColor(1);
 
 		} else
-			ImGui::Text("");
+			ImGui::Text(" ");
 
 		ImGui::EndPopup();
 	}
