@@ -23,7 +23,6 @@ INCLUDE 			=	-Iinclude/ -Iinclude/imgui/
 
 SRC_FILES			=	main								\
 						imgui/imgui 						\
-						imgui/imgui_demo					\
     					imgui/imgui_draw 					\
 						imgui/imgui_stdlib					\
     					imgui/imgui_tables 					\
