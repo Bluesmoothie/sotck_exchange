@@ -7,7 +7,7 @@ Display stock exchange
 ## Dev - dependencies
 
 ```bash
-sdl2-dev
+sdl2-dev libjsoncpp-dev libcurl4-openssl-dev
 ```
 
 ## Used libraries
