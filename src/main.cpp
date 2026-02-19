@@ -1,4 +1,4 @@
-#include "sotck_exchange.hpp"
+#include "stock_exchange.hpp"
 
 int main(int, char**)
 {
