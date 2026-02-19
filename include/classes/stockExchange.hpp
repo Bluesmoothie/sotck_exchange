@@ -4,19 +4,24 @@
 #include <string>
 #include <algorithm>
 #include "video.hpp"
+#include "finnhub-api-cpp/FinnHubAPI.h"
 
 class stockExchange {
 	private:
 
+		Rivendell::FinnHubAPI*				api;
+
 		std::vector<std::string>			_indices;
 		std::vector<std::string>::iterator	_selectedIndex;
 
+		bool	_apiKey;
 		bool	_addIndex;
 		bool	_showIndices;
 		bool	_removeIndex;
 
 		void		drawPopups(void);
 
+		void		apiKeyPopup(void);
 		void		addIndexPopup(void);
 		std::string	addIndex(const std::string& p_index);
 		void		showIndicesPopup(void);

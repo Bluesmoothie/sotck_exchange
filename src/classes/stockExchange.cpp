@@ -1,44 +1,58 @@
 #include "classes/stockExchange.hpp"
 
-stockExchange::stockExchange(void) : _indices{}, _selectedIndex(_indices.end()), _addIndex(false), _showIndices(false), _removeIndex(false) {}
+stockExchange::stockExchange(void) : api(nullptr), _indices{}, _selectedIndex(_indices.end()), _apiKey(false), _addIndex(false), _showIndices(false), _removeIndex(false) {}
 
 void	stockExchange::draw(void) {
-		this->_addIndex = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_A);
-		this->_showIndices = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_S);
-		this->_removeIndex = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_R);
+	this->_apiKey = this->api == nullptr;
+	this->_addIndex = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_A);
+	this->_showIndices = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_S);
+	this->_removeIndex = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_R);
 
-		ImGui::BeginMainMenuBar(); {
-			if (ImGui::BeginMenu("Indices")) {
-				this->_addIndex = ImGui::MenuItem("Add index", "Ctrl+A") || ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_A);
-				this->_showIndices = ImGui::MenuItem("Show indices", "Ctrl+S") || ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_S);
-				this->_removeIndex = ImGui::MenuItem("Remove index", "Ctrl+R") || ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_R);
-				ImGui::EndMenu();
-			}
+	ImGui::BeginMainMenuBar(); {
+		if (ImGui::BeginMenu("Indices")) {
+			this->_addIndex = ImGui::MenuItem("Add index", "Ctrl+A") || ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_A);
+			this->_showIndices = ImGui::MenuItem("Show indices", "Ctrl+S") || ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_S);
+			this->_removeIndex = ImGui::MenuItem("Remove index", "Ctrl+R") || ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_R);
+			ImGui::EndMenu();
+		}
 
-			if (ImGui::BeginMenu("Select index")) {
-				if (this->_indices.empty()) {
-					ImGui::PushStyleColor(ImGuiCol_Text, color_medium_grey);
-					ImGui::MenuItem("Empty...", nullptr, false, false);
-					ImGui::PopStyleColor(1);
-				} else {
-					std::vector<std::string>::iterator	it = this->_indices.begin();
-					std::vector<std::string>::iterator	ite = this->_indices.end();
-					for (; it != ite; ++it) {
-						if (ImGui::MenuItem((*it).c_str(), nullptr, it == this->_selectedIndex))
-							this->_selectedIndex = it;
-					}
+		if (ImGui::BeginMenu("Select index")) {
+			if (this->_indices.empty()) {
+				ImGui::PushStyleColor(ImGuiCol_Text, color_medium_grey);
+				ImGui::MenuItem("Empty...", nullptr, false, false);
+				ImGui::PopStyleColor(1);
+			} else {
+				std::vector<std::string>::iterator	it = this->_indices.begin();
+				std::vector<std::string>::iterator	ite = this->_indices.end();
+				for (; it != ite; ++it) {
+					if (ImGui::MenuItem((*it).c_str(), nullptr, it == this->_selectedIndex))
+						this->_selectedIndex = it;
 				}
-				ImGui::EndMenu();
 			}
-		} ImGui::EndMainMenuBar();
+			ImGui::EndMenu();
+		}
+	} ImGui::EndMainMenuBar();
 
-		this->drawPopups();
+	this->drawPopups();
 }
 
 void		stockExchange::drawPopups(void) {
+	this->apiKeyPopup();
 	this->addIndexPopup();
 	this->removeIndexPopup();
 	this->showIndicesPopup();
+}
+
+void	stockExchange::apiKeyPopup(void) {
+	if (this->_apiKey) {
+		ImGui::OpenPopup("Api key");
+		this->_apiKey = false;
+	}
+
+	if (ImGui::BeginPopupModal("Api key", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+
+		ImGui::EndPopup();
+	}
 }
 
 void	stockExchange::addIndexPopup(void) {
