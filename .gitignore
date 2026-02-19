@@ -42,6 +42,6 @@
 
 stock_exchange
 imgui.ini
-.build
+.build/
 .env
-.vscode
+.vscode/
