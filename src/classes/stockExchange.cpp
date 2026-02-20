@@ -63,7 +63,7 @@ void	stockExchange::apiKeyPopup(void) {
 
 		ImGui::SetCursorPosX((ImGui::GetWindowWidth() - 100.0f) / 2);
 		if (ImGui::Button("Add", ImVec2(100.0f, 0)) || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
-			message = this->apiKey(buff);
+			message = this->registerApiKey(buff);
 			if (message == "OK") {
 				message.clear();
 				ImGui::CloseCurrentPopup();
@@ -85,17 +85,22 @@ void	stockExchange::apiKeyPopup(void) {
 	}
 }
 
-std::string	stockExchange::apiKey(const std::string& p_apiKey) {
+std::string	stockExchange::registerApiKey(const std::string& p_apiKey) {
+	if (this->_api)
+		delete this->_api;
+
 	this->_api = new Rivendell::FinnHubAPI(p_apiKey);
 
 	Json::Value*	res = this->_api->StockSymbolLookup("apple");
+	std::string		ret;
 
-	if (res && res->isMember("error") && (*res)["error"].isString())
-		return (*res)["error"].asString();
-	else if (!res || (res && res->isMember("error") && !(*res)["error"].isString()))
-		return "Internal unknow error";
+	if (jsonUtils::isErrorResponse(res))
+		ret = jsonUtils::getResponseError(res);
 	else
-		return "OK";
+		ret = "OK";
+
+	delete res;
+	return ret;
 }
 
 void	stockExchange::addIndexPopup(void) {
@@ -149,12 +154,20 @@ std::string	stockExchange::addIndex(const std::string& p_index) {
 	if (p_index.size() == 0)
 		return "Empty text";
 
+	Json::Value*	res = this->_api->StockQuote(p_index);
+
+	if (jsonUtils::isErrorResponse(res)) {
+		std::string	ret = jsonUtils::getResponseError(res);
+		delete res;
+		return ret;
+	}
+
 	std::vector<std::string>::iterator	ite = this->_indices.end();
 	if (std::find(this->_indices.begin(), ite, p_index) != ite)
-		return ("Index aleady added");
+		return "Index aleady added";
 	
 	this->_indices.push_back(p_index);
-	return ("OK");
+	return "OK";
 }
 
 void	stockExchange::showIndicesPopup(void) {

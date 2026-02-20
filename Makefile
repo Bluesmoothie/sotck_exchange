@@ -31,6 +31,7 @@ SRC_FILES			=	main								\
     					imgui/backends/imgui_impl_opengl3 	\
 						finnhub-api-cpp/FinnHubAPI			\
 						finnhub-api-cpp/RealTimeDataSource	\
+						utils/jsonUtils						\
 						classes/video						\
 						classes/stockExchange				\
 
@@ -47,10 +48,11 @@ $(NAME)				:	$(BUILD_DIR) $(OBJ)
 
 $(BUILD_DIR)		:
 					mkdir -p $(BUILD_DIR)
+					mkdir -p $(BUILD_DIR)classes
+					mkdir -p $(BUILD_DIR)finnhub-api-cpp
 					mkdir -p $(BUILD_DIR)imgui
 					mkdir -p $(BUILD_DIR)imgui/backends
-					mkdir -p $(BUILD_DIR)finnhub-api-cpp
-					mkdir -p $(BUILD_DIR)classes
+					mkdir -p $(BUILD_DIR)utils
 
 $(BUILD_DIR)%.o		: 	$(SRC_DIR)%.cpp
 					$(CXX) $(CXXFLAGS) -c $< -o $@

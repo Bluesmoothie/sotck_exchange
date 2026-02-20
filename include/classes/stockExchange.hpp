@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "video.hpp"
 #include "finnhub-api-cpp/FinnHubAPI.h"
+#include "utils/jsonUtils.hpp"
 
 class stockExchange {
 	private:
@@ -22,7 +23,7 @@ class stockExchange {
 		void		drawPopups(void);
 
 		void		apiKeyPopup(void);
-		std::string	apiKey(const std::string& p_apiKey);
+		std::string	registerApiKey(const std::string& p_apiKey);
 		void		addIndexPopup(void);
 		std::string	addIndex(const std::string& p_index);
 		void		showIndicesPopup(void);
