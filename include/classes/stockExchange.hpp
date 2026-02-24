@@ -12,16 +12,18 @@
 class stockExchange {
 	private:
 
-		Rivendell::FinnHubAPI*				_api;
+		Rivendell::FinnHubAPI*						_api;
 
-		std::vector<std::string>			_indices;
-		std::vector<std::string>::iterator	_selectedIndex;
+		std::vector<std::string>					_indices;
+		std::vector<std::string>::difference_type	_selectedIndex;
 
 		bool	_apiKey;
 		bool	_addIndex;
 		bool	_showIndices;
 		bool	_removeIndex;
 
+		void		drawMenuBar(void);
+		void		drawMainScreen(void);
 		void		drawPopups(void);
 
 		void		apiKeyPopup(void);

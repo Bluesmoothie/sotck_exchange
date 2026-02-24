@@ -1,8 +1,15 @@
 #include "classes/stockExchange.hpp"
 
-stockExchange::stockExchange(void) : _api(nullptr), _indices{}, _selectedIndex(_indices.end()), _apiKey(false), _addIndex(false), _showIndices(false), _removeIndex(false) {}
+stockExchange::stockExchange(void) : _api(nullptr), _indices{}, _selectedIndex(-1), _apiKey(false), _addIndex(false), _showIndices(false), _removeIndex(false) {}
 
 void	stockExchange::draw(void) {
+	
+	this->drawMenuBar();
+	this->drawMainScreen();
+	this->drawPopups();
+}
+
+void		stockExchange::drawMenuBar(void) {
 	this->_apiKey = this->_api == nullptr;
 	this->_addIndex = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_A);
 	this->_showIndices = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_S);
@@ -25,15 +32,46 @@ void	stockExchange::draw(void) {
 				std::vector<std::string>::iterator	it = this->_indices.begin();
 				std::vector<std::string>::iterator	ite = this->_indices.end();
 				for (; it != ite; ++it) {
-					if (ImGui::MenuItem((*it).c_str(), nullptr, it == this->_selectedIndex))
-						this->_selectedIndex = it;
+					std::vector<std::string>::difference_type	index = std::distance(this->_indices.begin(), it);
+					if (ImGui::MenuItem((*it).c_str(), nullptr, index == this->_selectedIndex))
+						this->_selectedIndex = index;
 				}
 			}
 			ImGui::EndMenu();
 		}
 	} ImGui::EndMainMenuBar();
+}
 
-	this->drawPopups();
+void		stockExchange::drawMainScreen(void) {
+	if (this->_selectedIndex != -1) {
+
+	static std::string	error = {};
+	static Json::Value*	quotes = nullptr;
+
+	if (!quotes) {
+		quotes = this->_api->StockQuote(this->_indices[this->_selectedIndex]);
+		error.clear();
+		if (jsonUtils::isErrorResponse(quotes)) {
+			error = jsonUtils::getResponseError(quotes);
+		}
+	}
+
+	if (error.size() > 0) {
+		ImGui::Text("Error while fetching stock quote: %s", error.c_str());
+	} else {
+		ImGui::Dummy(ImVec2(0, 15));
+		ImGui::Text("Index: %s", this->_indices[this->_selectedIndex].c_str());
+		ImGui::Spacing();
+		ImGui::Text("        Current price: %f", (*quotes)["c"].asFloat());
+		ImGui::Text("               Change: %f", (*quotes)["d"].asFloat());
+		ImGui::Text("       Percent change: %f", (*quotes)["dp"].asFloat());
+		ImGui::Text("High price of the day: %f", (*quotes)["h"].asFloat());
+		ImGui::Text(" Low price of the day: %f", (*quotes)["l"].asFloat());
+		ImGui::Text("Open price of the day: %f", (*quotes)["o"].asFloat());
+		ImGui::Text(" Previous close price: %f", (*quotes)["pc"].asFloat());
+	}
+		
+	}
 }
 
 void		stockExchange::drawPopups(void) {
@@ -122,8 +160,9 @@ void	stockExchange::showIndicesPopup(void) {
 		std::vector<std::string>::iterator	it = this->_indices.begin();
 		std::vector<std::string>::iterator	ite = this->_indices.end();
 		for (; it != ite; ++it) {
-			if (ImGui::Selectable((*it).c_str(), it == this->_selectedIndex))
-				this->_selectedIndex = it;
+			std::vector<std::string>::difference_type	distance = std::distance(this->_indices.begin(), it);
+			if (ImGui::Selectable((*it).c_str(), distance == this->_selectedIndex))
+				this->_selectedIndex = distance;
 		}
 		ImGui::EndListBox();
 
@@ -155,8 +194,8 @@ std::string	stockExchange::removeIndex(const std::string& p_index) {
 	if (it == ite)
 		return ("Index not found");
 	
-	if (it == this->_selectedIndex)
-		this->_selectedIndex = this->_indices.end();
+	if (std::distance(this->_indices.begin(), it) == this->_selectedIndex)
+		this->_selectedIndex = -1;
 	this->_indices.erase(it);
 	return ("OK");
 }
