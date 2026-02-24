@@ -6,3 +6,7 @@
 #define UI_COLOR_LIGHT_GREY		ImVec4(0.85f, 0.85f, 0.90f, 1.00f)
 #define UI_COLOR_MEDIUM_GREY	ImVec4(0.65f, 0.65f, 0.70f, 1.00f)
 
+#define	UI_BUTTON_WIDTH			100.0f
+#define UI_BUTTON_SIZE			ImVec2(UI_BUTTON_WIDTH, 0.0f)
+
+#define	UI_PADDING_WIDTH		20.0f

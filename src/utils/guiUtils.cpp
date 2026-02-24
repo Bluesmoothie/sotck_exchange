@@ -14,8 +14,8 @@ namespace	guiUtils {
 
 			ImGui::Spacing();
 
-			ImGui::SetCursorPosX((ImGui::GetWindowWidth() - 100.0f) / 2);
-			if (ImGui::Button("Ok", ImVec2(100.0f, 0)) || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
+			ImGui::SetCursorPosX((ImGui::GetWindowWidth() - UI_BUTTON_WIDTH) / 2);
+			if (ImGui::Button("Ok", UI_BUTTON_SIZE) || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
 				message = callbackFunc(buff);
 				if (message == "OK") {
 					message.clear();
@@ -51,16 +51,16 @@ namespace	guiUtils {
 
 			ImGui::Spacing();
 
-			ImGui::SetCursorPosX(20.0f);
-			if (ImGui::Button("Ok", ImVec2(100.0f, 0)) || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
+			ImGui::SetCursorPosX(UI_PADDING_WIDTH);
+			if (ImGui::Button("Ok", UI_BUTTON_SIZE) || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
 				message = callbackFunc(buff);
 				if (message == "OK") {
 					message.clear();
 					ImGui::CloseCurrentPopup();
 				}
 			}
-			ImGui::SameLine(ImGui::GetWindowWidth() - 100.0f - 20.0f);
-			if (ImGui::Button("Cancel", ImVec2(100.0f, 0)))
+			ImGui::SameLine(ImGui::GetWindowWidth() - UI_BUTTON_WIDTH - UI_PADDING_WIDTH);
+			if (ImGui::Button("Cancel", UI_BUTTON_SIZE))
 				ImGui::CloseCurrentPopup();
 
 			if (!message.empty()) {
@@ -92,8 +92,8 @@ namespace	guiUtils {
 			}
 			ImGui::EndListBox();
 
-			ImGui::SetCursorPosX(ImGui::GetWindowWidth() /2 - 100.0f);
-			if (ImGui::Button("Ok", ImVec2(100.0f, 0.0f))) {
+			ImGui::SetCursorPosX((ImGui::GetWindowWidth() - UI_BUTTON_WIDTH) / 2);
+			if (ImGui::Button("Ok", UI_BUTTON_SIZE)) {
 				setFunc(selectedIndex);
 				ImGui::CloseCurrentPopup();
 			}
