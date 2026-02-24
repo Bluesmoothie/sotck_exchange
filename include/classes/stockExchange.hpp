@@ -34,6 +34,8 @@ class stockExchange {
 		void		removeIndexPopup(void);
 		std::string	removeIndex(const std::string& p_index);
 
+		void		setSelectedIndex(const std::vector<std::string>::difference_type p_index);
+
 	public:
 
 		stockExchange(void);

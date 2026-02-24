@@ -148,26 +148,15 @@ std::string	stockExchange::addIndex(const std::string& p_index) {
 }
 
 void	stockExchange::showIndicesPopup(void) {
-	bool	dummy = true;
+	const char											popupName[] = "Indices list";
+	static	std::vector<std::string>::difference_type	selectedIndex = this->_selectedIndex;
 
 	if (this->_showIndices) {
-		ImGui::OpenPopup("Indices list");
+		ImGui::OpenPopup(popupName);
 		this->_showIndices = false;
 	}
 
-	if (ImGui::BeginPopupModal("Indices list", &dummy, ImGuiWindowFlags_AlwaysAutoResize)) {
-		ImGui::BeginListBox("##Indices list box");
-		std::vector<std::string>::iterator	it = this->_indices.begin();
-		std::vector<std::string>::iterator	ite = this->_indices.end();
-		for (; it != ite; ++it) {
-			std::vector<std::string>::difference_type	distance = std::distance(this->_indices.begin(), it);
-			if (ImGui::Selectable((*it).c_str(), distance == this->_selectedIndex))
-				this->_selectedIndex = distance;
-		}
-		ImGui::EndListBox();
-
-		ImGui::EndPopup();
-	}
+	guiUtils::selectableListPopup(popupName, this->_indices, selectedIndex, [this](const std::vector<std::string>::difference_type p) -> void {return this->setSelectedIndex(p);});
 }
 
 void	stockExchange::removeIndexPopup(void) {
@@ -198,4 +187,9 @@ std::string	stockExchange::removeIndex(const std::string& p_index) {
 		this->_selectedIndex = -1;
 	this->_indices.erase(it);
 	return ("OK");
+}
+
+void		stockExchange::setSelectedIndex(const std::vector<std::string>::difference_type p_index) {
+	if (p_index >= 0)
+		this->_selectedIndex = p_index;
 }

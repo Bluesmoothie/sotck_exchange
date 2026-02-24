@@ -77,4 +77,28 @@ namespace	guiUtils {
 			ImGui::EndPopup();
 		}
 	}
+
+	void	selectableListPopup(const char popupName[], std::vector<std::string>& list, std::vector<std::string>::difference_type& selectedIndex, std::function<void(const std::vector<std::string>::difference_type)> setFunc) {
+		const std::string	boxName = std::string("##") + popupName + "Box";
+		
+		if (ImGui::BeginPopupModal(popupName, nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+			ImGui::BeginListBox(boxName.c_str());
+			std::vector<std::string>::iterator	it = list.begin();
+			std::vector<std::string>::iterator	ite = list.end();
+			for (; it != ite; ++it) {
+				std::vector<std::string>::difference_type	distance = std::distance(list.begin(), it);
+				if (ImGui::Selectable((*it).c_str(), distance == selectedIndex))
+					selectedIndex = distance;
+			}
+			ImGui::EndListBox();
+
+			ImGui::SetCursorPosX(ImGui::GetWindowWidth() /2 - 100.0f);
+			if (ImGui::Button("Ok", ImVec2(100.0f, 0.0f))) {
+				setFunc(selectedIndex);
+				ImGui::CloseCurrentPopup();
+			}
+	
+			ImGui::EndPopup();
+		}
+	}
 }
