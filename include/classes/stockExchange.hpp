@@ -12,29 +12,34 @@
 class stockExchange {
 	private:
 
-		Rivendell::FinnHubAPI*						_api;
+		Rivendell::FinnHubAPI*						_api = nullptr;
 
-		std::vector<std::string>					_indices;
-		std::vector<std::string>::difference_type	_selectedIndex;
+		std::vector<std::string>					_indices{};
+		std::vector<std::string>::difference_type	_selectedIndex = -1;
 
-		bool	_apiKey;
-		bool	_addIndex;
-		bool	_selectIndex;
-		bool	_showIndices;
-		bool	_removeIndex;
+		Json::Value*								_lastResults = nullptr;
+		std::vector<std::string>*					_lastIndices = nullptr;
+
+		bool	_popupApiKey = false;
+		bool	_popupSearchIndex = false;
+		bool	_popupSelectIndex = false;
+		bool	_popupShowIndices = false;
+		bool	_popupRemoveIndex = false;
 
 		void		drawMenuBar(void);
 		void		drawMainScreen(void);
 		void		drawPopups(void);
 
-		void		apiKeyPopup(void);
-		std::string	registerApiKey(const std::string& p_apiKey);
-		void		addIndexPopup(void);
-		std::string	addIndex(const std::string& p_index);
-		void		selectIndexPopup(void);
-		void		showIndicesPopup(void);
-		void		removeIndexPopup(void);
-		std::string	removeIndex(const std::string& p_index);
+		void			apiKeyPopup(void);
+		std::string		registerApiKey(const std::string& p_apiKey);
+		void			searchIndexPopup(void);
+		std::string		searchIndex(const std::string& p_index);
+		void			parseIndexLookup(void);
+		void			selectIndexPopup(void);
+		std::string		addIndex(const std::vector<std::string>::difference_type& p_index);
+		void			showIndicesPopup(void);
+		void			removeIndexPopup(void);
+		std::string		removeIndex(const std::string& p_index);
 
 		void		setSelectedIndex(const std::vector<std::string>::difference_type p_index);
 

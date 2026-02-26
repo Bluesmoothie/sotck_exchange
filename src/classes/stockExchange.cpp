@@ -1,6 +1,6 @@
 #include "classes/stockExchange.hpp"
 
-stockExchange::stockExchange(void) : _api(nullptr), _indices{}, _selectedIndex(-1), _apiKey(false), _addIndex(false), _showIndices(false), _removeIndex(false) {}
+stockExchange::stockExchange(void) {}
 
 void	stockExchange::draw(void) {
 	
@@ -10,16 +10,16 @@ void	stockExchange::draw(void) {
 }
 
 void		stockExchange::drawMenuBar(void) {
-	this->_apiKey = this->_api == nullptr;
-	this->_addIndex = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_A);
-	this->_showIndices = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_S);
-	this->_removeIndex = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_R);
+	this->_popupApiKey = this->_api == nullptr;
+	this->_popupSearchIndex = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_A);
+	this->_popupShowIndices = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_S);
+	this->_popupRemoveIndex = ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_R);
 
 	ImGui::BeginMainMenuBar(); {
 		if (ImGui::BeginMenu("Indices")) {
-			this->_addIndex = ImGui::MenuItem("Add index", "Ctrl+A") || ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_A);
-			this->_showIndices = ImGui::MenuItem("Show indices", "Ctrl+S") || ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_S);
-			this->_removeIndex = ImGui::MenuItem("Remove index", "Ctrl+R") || ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_R);
+			this->_popupSearchIndex = ImGui::MenuItem("Search index", "Ctrl+A") || ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_A);
+			this->_popupShowIndices = ImGui::MenuItem("Show indices", "Ctrl+S") || ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_S);
+			this->_popupRemoveIndex = ImGui::MenuItem("Remove index", "Ctrl+R") || ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_R);
 			ImGui::EndMenu();
 		}
 
@@ -56,10 +56,10 @@ void		stockExchange::drawMainScreen(void) {
 		}
 	}
 
+	ImGui::Dummy(ImVec2(0, 15));
 	if (error.size() > 0) {
 		ImGui::Text("Error while fetching stock quote: %s", error.c_str());
 	} else {
-		ImGui::Dummy(ImVec2(0, 15));
 		ImGui::Text("Index: %s", this->_indices[this->_selectedIndex].c_str());
 		ImGui::Spacing();
 		ImGui::Text("        Current price: %f", (*quotes)["c"].asFloat());
@@ -76,7 +76,7 @@ void		stockExchange::drawMainScreen(void) {
 
 void		stockExchange::drawPopups(void) {
 	this->apiKeyPopup();
-	this->addIndexPopup();
+	this->searchIndexPopup();
 	this->selectIndexPopup();
 	this->removeIndexPopup();
 	this->showIndicesPopup();
@@ -87,9 +87,9 @@ void	stockExchange::apiKeyPopup(void) {
 	static std::string	buff = {};
 	static std::string	message = {};
 
-	if (this->_apiKey) {
+	if (this->_popupApiKey) {
 		ImGui::OpenPopup(popupName);
-		this->_apiKey = false;
+		this->_popupApiKey = false;
 	}
 
 	guiUtils::obligatoryInputPopup(buff, message, popupName, "Finnhub API key", [this](const std::string& p) -> std::string {return this->registerApiKey(p);});
@@ -113,22 +113,22 @@ std::string	stockExchange::registerApiKey(const std::string& p_apiKey) {
 	return ret;
 }
 
-void	stockExchange::addIndexPopup(void) {
+void	stockExchange::searchIndexPopup(void) {
 	const char			popupName[] = "Add index";
 	static std::string	message = {};
 	static std::string	buff = {};
 
-	if (this->_addIndex) {
+	if (this->_popupSearchIndex) {
 		ImGui::OpenPopup(popupName);
-		this->_addIndex = false;
+		this->_popupSearchIndex = false;
 		message.clear();
 		buff.clear();
 	}
 	
-	guiUtils::inputPopup(buff, message, popupName, "Index", [this](const std::string& p) -> std::string {return this->addIndex(p);});
+	guiUtils::inputPopup(buff, message, popupName, "Index", [this](const std::string& p) -> std::string {return this->searchIndex(p);});
 }
 
-std::string	stockExchange::addIndex(const std::string& p_index) {
+std::string	stockExchange::searchIndex(const std::string& p_index) {
 	if (p_index.size() == 0)
 		return "Empty text";
 
@@ -141,37 +141,55 @@ std::string	stockExchange::addIndex(const std::string& p_index) {
 	}
 
 	if (res->isMember("count") && (*res)["count"].asInt() > 0) {
-		this->_selectedIndex = true;
+		this->_popupSelectIndex = true;
+		this->_lastResults = res;
 		return "Selecting";
 	}
 
-	// std::vector<std::string>::iterator	ite = this->_indices.end();
-	// if (std::find(this->_indices.begin(), ite, p_index) != ite)
-	// 	return "Index aleady added";
-	
-	// this->_indices.push_back(p_index);
 	return "Unknow error";
 }
 
-void		stockExchange::selectIndexPopup(void) {
-	const char			popupName[] = "Select index";
-	static	std::vector<std::string>::difference_type	selectedIndex = 0;
+void		stockExchange::parseIndexLookup(void) {
+	if (this->_lastIndices)
+			delete this->_lastIndices;
+	this->_lastIndices = new std::vector<std::string>;
 
-	if (this->_selectIndex) {
-		ImGui::OpenPopup(popupName);
-		this->_selectIndex = false;
-		selectedIndex = 0;
+	for (int i = 0; i < (*this->_lastResults)["count"].asInt(); i++) {
+		this->_lastIndices->push_back((*this->_lastResults)["result"][i]["symbol"].asString());
 	}
 
+}
+
+void		stockExchange::selectIndexPopup(void) {
+	const char											popupName[] = "Select index";
+	static	std::vector<std::string>::difference_type	selectedIndex = 0;
+
+	if (this->_popupSelectIndex) {
+		ImGui::OpenPopup(popupName);
+		this->_popupSelectIndex = false;
+		selectedIndex = 0;
+		this->parseIndexLookup();
+	}
+
+	guiUtils::selectableListPopup(popupName, (*this->_lastIndices), selectedIndex, [this](const std::vector<std::string>::difference_type& p) -> std::string {return this->addIndex(p);});
+}
+
+std::string	stockExchange::addIndex(const std::vector<std::string>::difference_type& p_index) {
+	std::vector<std::string>::iterator	ite = this->_indices.end();
+	if (std::find(this->_indices.begin(), ite, this->_lastIndices->at(p_index)) != ite)
+		return "Index aleady added";
+	
+	this->_indices.push_back(this->_lastIndices->at(p_index));
+	return "OK";
 }
 
 void	stockExchange::showIndicesPopup(void) {
 	const char											popupName[] = "Indices list";
 	static	std::vector<std::string>::difference_type	selectedIndex = this->_selectedIndex;
 
-	if (this->_showIndices) {
+	if (this->_popupShowIndices) {
 		ImGui::OpenPopup(popupName);
-		this->_showIndices = false;
+		this->_popupShowIndices = false;
 	}
 
 	guiUtils::selectableListPopup(popupName, this->_indices, selectedIndex, [this](const std::vector<std::string>::difference_type p) -> void {return this->setSelectedIndex(p);});
@@ -182,9 +200,9 @@ void	stockExchange::removeIndexPopup(void) {
 	static std::string	message = {};
 	static std::string	buff = {};
 
-	if (this->_removeIndex) {
+	if (this->_popupRemoveIndex) {
 		ImGui::OpenPopup(popupName);
-		this->_removeIndex = false;
+		this->_popupRemoveIndex = false;
 		message.clear();
 		buff.clear();
 	}
