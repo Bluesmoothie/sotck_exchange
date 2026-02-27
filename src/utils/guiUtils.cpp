@@ -20,6 +20,9 @@ namespace	guiUtils {
 				if (message == "OK") {
 					message.clear();
 					ImGui::CloseCurrentPopup();
+					#ifdef DEBUG
+						DEBUG_CLOSE_POPUP(popupName, DEBUG_POPUP_TYPE_OBLIGATORY_INPUT, DEBUG_REASON_CLOSE_ON_VALID);
+					#endif
 				}
 			}
 
@@ -57,11 +60,18 @@ namespace	guiUtils {
 				if (message == "OK") {
 					message.clear();
 					ImGui::CloseCurrentPopup();
+					#ifdef DEBUG
+						DEBUG_CLOSE_POPUP(popupName, DEBUG_POPUP_TYPE_INPUT, DEBUG_REASON_CLOSE_ON_VALID);
+					#endif
 				}
 			}
 			ImGui::SameLine(ImGui::GetWindowWidth() - UI_BUTTON_WIDTH - UI_PADDING_WIDTH);
-			if (ImGui::Button("Cancel", UI_BUTTON_SIZE))
+			if (ImGui::Button("Cancel", UI_BUTTON_SIZE)) {
 				ImGui::CloseCurrentPopup();
+				#ifdef DEBUG
+					DEBUG_CLOSE_POPUP(popupName, DEBUG_POPUP_TYPE_INPUT, DEBUG_REASON_CANCEL);
+				#endif
+			}
 
 			if (!message.empty()) {
 				ImVec2	text_size = ImGui::CalcTextSize(message.c_str());
@@ -95,13 +105,21 @@ namespace	guiUtils {
 			ImGui::SetCursorPosX(UI_PADDING_WIDTH);
 			if (ImGui::Button("Ok", UI_BUTTON_SIZE) || ImGui::IsKeyPressed(ImGuiKey_Enter)) {
 				setFunc(selectedIndex);
-				if (closeOnOk)
+				if (closeOnOk) {
 					ImGui::CloseCurrentPopup();
+					#ifdef DEBUG
+						DEBUG_CLOSE_POPUP(popupName, DEBUG_POPUP_TYPE_SELECTABLE_LIST, DEBUG_REASON_CLOSE_ON_OK);
+					#endif
+				}
 			}
 
 			ImGui::SameLine(ImGui::GetWindowWidth() - UI_BUTTON_WIDTH - UI_PADDING_WIDTH);
-			if (ImGui::Button("Cancel", UI_BUTTON_SIZE))
+			if (ImGui::Button("Cancel", UI_BUTTON_SIZE)) {
 				ImGui::CloseCurrentPopup();
+				#ifdef DEBUG
+					DEBUG_CLOSE_POPUP(popupName, DEBUG_POPUP_TYPE_SELECTABLE_LIST, DEBUG_REASON_CANCEL);
+				#endif
+			}
 	
 			ImGui::EndPopup();
 		}

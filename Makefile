@@ -44,6 +44,9 @@ DEPS 				= 	$(addprefix $(BUILD_DIR), $(addsuffix .d, $(SRC_FILES)))
 
 all					:	$(NAME)
 
+debug				:	fclean
+					$(MAKE) MODE=debug all
+
 $(NAME)				:	$(BUILD_DIR) $(OBJ)
 					$(CXX) $(CXXFLAGS) $(OBJ) $(LIBS) -o $(NAME)
 

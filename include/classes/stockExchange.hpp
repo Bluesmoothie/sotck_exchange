@@ -3,11 +3,12 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+
 #include "video.hpp"
-#include "finnhub-api-cpp/FinnHubAPI.h"
-#include "utils/jsonUtils.hpp"
 #include "ui.hpp"
+#include "utils/jsonUtils.hpp"
 #include "utils/guiUtils.hpp"
+#include "finnhub-api-cpp/FinnHubAPI.h"
 
 class stockExchange {
 	private:

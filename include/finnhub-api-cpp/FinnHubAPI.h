@@ -1,4 +1,5 @@
 #pragma once
+
 #include "RealTimeDataSource.h"
 
 namespace Rivendell
