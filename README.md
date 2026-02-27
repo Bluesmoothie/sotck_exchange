@@ -1,6 +1,6 @@
 # stock_exchange
 
-Display stock exchange
+Display stock exchange using [Finnhub](https://finnhub.io/) API
 
 ## Dependencies
 
