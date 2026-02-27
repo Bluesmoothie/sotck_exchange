@@ -40,8 +40,23 @@ void		stockExchange::drawMenuBar(void) {
 			}
 			ImGui::EndMenu();
 		}
+
 		if (ImGui::BeginMenu("Markets")) {
 			ImGui::MenuItem("US", nullptr, true);
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Settings")) {
+			if (ImGui::MenuItem("Save")) {
+				this->save();
+			}
+			if (ImGui::MenuItem("Exit")) {
+				exit(0);
+			}
+			if (ImGui::MenuItem("Save and exit")) {
+				this->save();
+				exit(0);
+			}
 			ImGui::EndMenu();
 		}
 
@@ -240,4 +255,8 @@ std::string	stockExchange::removeIndex(const std::string& p_index) {
 void		stockExchange::setSelectedIndex(const std::vector<std::string>::difference_type p_index) {
 	if (p_index >= 0)
 		this->_selectedIndex = p_index;
+}
+
+void		stockExchange::save(void) {
+
 }

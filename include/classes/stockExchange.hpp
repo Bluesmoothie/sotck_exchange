@@ -50,6 +50,8 @@ class stockExchange {
 
 		void		setSelectedIndex(const std::vector<std::string>::difference_type p_index);
 
+		void		save(void);
+
 	public:
 
 		stockExchange(void);
