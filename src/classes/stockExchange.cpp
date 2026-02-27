@@ -39,8 +39,13 @@ void		stockExchange::drawMenuBar(void) {
 				}
 			}
 			ImGui::EndMenu();
-			this->_menuHeight = ImGui::GetWindowHeight();
 		}
+		if (ImGui::BeginMenu("Markets")) {
+			ImGui::MenuItem("US", nullptr, true);
+			ImGui::EndMenu();
+		}
+
+		this->_menuHeight = ImGui::GetWindowHeight();
 	} ImGui::EndMainMenuBar();
 }
 
@@ -139,7 +144,7 @@ std::string	stockExchange::searchIndex(const std::string& p_index) {
 	if (p_index.size() == 0)
 		return "Empty text";
 
-	Json::Value*	res = this->_api->StockSymbolLookup(p_index);
+	Json::Value*	res = this->_api->StockSymbolLookup(p_index + (this->_selectedMarket != -1 ? "&exchange=" + this->_markets.at(this->_selectedMarket) : ""));
 
 	if (jsonUtils::isErrorResponse(res)) {
 		std::string	ret = jsonUtils::getResponseError(res);
