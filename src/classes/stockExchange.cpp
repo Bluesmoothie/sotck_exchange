@@ -69,6 +69,7 @@ void		stockExchange::drawMainScreen(void) {
 
 	static std::string	error = {};
 	static Json::Value*	quotes = nullptr;
+	static time_t		fetchTime;
 
 	if (quotes && this->_oldSelectedIndex != this->_selectedIndex) {
 		delete quotes;
@@ -77,6 +78,7 @@ void		stockExchange::drawMainScreen(void) {
 
 	if (!quotes) {
 		quotes = this->_api->StockQuote(this->_indices[this->_selectedIndex]);
+		time(&fetchTime);
 		error.clear();
 		if (jsonUtils::isErrorResponse(quotes)) {
 			error = jsonUtils::getResponseError(quotes);
@@ -88,6 +90,7 @@ void		stockExchange::drawMainScreen(void) {
 		ImGui::Text("Error while fetching stock quote: %s", error.c_str());
 	} else {
 		ImGui::Text("Index: %s", this->_indices[this->_selectedIndex].c_str());
+		ImGui::Text("Fetched at: %s", ctime(&fetchTime));
 		ImGui::Spacing();
 		ImGui::Text("        Current price: %f", (*quotes)["c"].asFloat());
 		ImGui::Text("               Change: %f", (*quotes)["d"].asFloat());
@@ -96,6 +99,10 @@ void		stockExchange::drawMainScreen(void) {
 		ImGui::Text(" Low price of the day: %f", (*quotes)["l"].asFloat());
 		ImGui::Text("Open price of the day: %f", (*quotes)["o"].asFloat());
 		ImGui::Text(" Previous close price: %f", (*quotes)["pc"].asFloat());
+		if (ImGui::Button("Refresh")) {
+			delete quotes;
+			quotes = nullptr;
+		}
 	}
 		
 	}

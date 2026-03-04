@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <ctime>
 
 #include "video.hpp"
 #include "ui.hpp"
