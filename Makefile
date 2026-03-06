@@ -7,11 +7,14 @@ MODE 				?= 	release
 
 CXX					=	c++
 CXXFLAGS			=	-Wall -Wextra -Werror -MMD -MP $(INCLUDE)
-LIBS				=	-lSDL2 -lGL -lcurl -ljsoncpp
+LDFLAGS				=	-lSDL2 -lGL -lcurl -ljsoncpp
 
 ifeq ($(MODE), debug)
 	CXXFLAGS		= 	-Wall -Wextra -MMD -MP $(INCLUDE) -g3 -DDEBUG
 endif
+
+CXXFLAGS 			+=	$(shell pkg-config --cflags libsecret-1 glib-2.0)
+LDFLAGS  			+=	$(shell pkg-config --libs   libsecret-1 glib-2.0)
 
 #			COMMON
 
@@ -33,6 +36,7 @@ SRC_FILES			=	main								\
 						finnhub-api-cpp/RealTimeDataSource	\
 						utils/jsonUtils						\
 						utils/guiUtils						\
+						utils/secretStore					\
 						classes/save						\
 						classes/video						\
 						classes/stockExchange				\
@@ -49,7 +53,7 @@ debug				:	fclean
 					$(MAKE) MODE=debug all
 
 $(NAME)				:	$(BUILD_DIR) $(OBJ)
-					$(CXX) $(CXXFLAGS) $(OBJ) $(LIBS) -o $(NAME)
+					$(CXX) $(CXXFLAGS) $(OBJ) $(LDFLAGS) -o $(NAME)
 
 $(BUILD_DIR)		:
 					mkdir -p $(BUILD_DIR)

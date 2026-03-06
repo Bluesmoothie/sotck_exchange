@@ -8,13 +8,15 @@ save::save(void) {
 }
 
 void	save::loadSave(void) {
-	Json::Value	settings;
+	// Json::Value	settings;
 
-	this->saveFile >> settings;
+	// this->saveFile >> settings;
+
+	this->_apiKey = retrieveApiKey();
 }
 
 void	save::saveSettings(void) {
-	Json::Value	settings;
+	// Json::Value	settings;
 
-	settings["apiKey"].append(this->_api);
+	saveApiKey(this->_apiKey);
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "finnhub-api-cpp/FinnHubAPI.h"
+#include "utils/secretStoreExt.hpp"
 #include <fstream>
 
 class save
@@ -8,14 +9,13 @@ class save
 	private:
 
 		std::ifstream	saveFile;
-
-		void	loadSave(void);
-
+		
 	protected:
-
-		Rivendell::FinnHubAPI*						_api = nullptr;
-
+		
+		std::string	_apiKey;
+		
 		save(void);
-
+		
 		void	saveSettings(void);
+		void	loadSave(void);
 };

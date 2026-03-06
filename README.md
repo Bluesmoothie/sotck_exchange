@@ -7,7 +7,13 @@ Display stock exchange using [Finnhub](https://finnhub.io/) API
 ## Dev - dependencies
 
 ```bash
-sdl2-dev libjsoncpp-dev libcurl4-openssl-dev
+make g++ sdl2-dev libjsoncpp-dev libcurl4-openssl-dev libsecret-1-dev libglib2.0-dev pkg-config
+```
+
+## Runtime dependencies
+
+```bash
+libsecret-1-0
 ```
 
 ## Used libraries

@@ -15,6 +15,8 @@
 class stockExchange : public save {
 	private:
 
+		Rivendell::FinnHubAPI*						_api = nullptr;
+
 		std::vector<std::string>					_indices{};
 		std::vector<std::string>::difference_type	_selectedIndex = -1;
 		std::vector<std::string>::difference_type	_oldSelectedIndex = -1;
@@ -49,8 +51,6 @@ class stockExchange : public save {
 		std::string		removeIndex(const std::string& p_index);
 
 		void		setSelectedIndex(const std::vector<std::string>::difference_type p_index);
-
-		void		save(void);
 
 	public:
 

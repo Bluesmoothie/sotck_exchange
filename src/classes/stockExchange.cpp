@@ -1,6 +1,11 @@
 #include "classes/stockExchange.hpp"
 
-stockExchange::stockExchange(void) {}
+stockExchange::stockExchange(void) {
+	this->loadSave();
+	if (this->_apiKey != "") {
+		this->_api = new Rivendell::FinnHubAPI(this->_apiKey);
+	}
+}
 
 void	stockExchange::draw(void) {
 	
@@ -48,13 +53,13 @@ void		stockExchange::drawMenuBar(void) {
 
 		if (ImGui::BeginMenu("Settings")) {
 			if (ImGui::MenuItem("Save")) {
-				this->save();
+				this->saveSettings();
 			}
 			if (ImGui::MenuItem("Exit")) {
 				exit(0);
 			}
 			if (ImGui::MenuItem("Save and exit")) {
-				this->save();
+				this->saveSettings();
 				exit(0);
 			}
 			ImGui::EndMenu();
@@ -140,8 +145,10 @@ std::string	stockExchange::registerApiKey(const std::string& p_apiKey) {
 
 	if (jsonUtils::isErrorResponse(res))
 		ret = jsonUtils::getResponseError(res);
-	else
+	else {
 		ret = "OK";
+		this->_apiKey = p_apiKey;
+	}
 
 	delete res;
 	return ret;
@@ -262,8 +269,4 @@ std::string	stockExchange::removeIndex(const std::string& p_index) {
 void		stockExchange::setSelectedIndex(const std::vector<std::string>::difference_type p_index) {
 	if (p_index >= 0)
 		this->_selectedIndex = p_index;
-}
-
-void		stockExchange::save(void) {
-
 }
